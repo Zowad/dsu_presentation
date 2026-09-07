@@ -1,18 +1,4 @@
-% ---------- Slide 1: Title ----------
-\begin{frame}[plain]
-  \maketitle
-\end{frame}
-
-% ---------- Slide 2: Outline ----------
-% NOTE: only "Introduction" has real content so far; add teammates'
-% \section{...} commands below as their parts are ready and this list
-% (and the top navigation bar) will extend automatically.
-\begin{frame}{Outline}
-  \tableofcontents
-\end{frame}
-
 \section{Introduction}
-% (this \section triggers the automatic divider frame defined above)
 
 % ---------- Slide: The Hook ----------
 \begin{frame}{A Familiar Problem}
@@ -170,5 +156,36 @@ Same representative $\Longleftrightarrow$ same set.
 \end{column}
 
 \end{columns}
+
+\end{frame}
+
+% ---------- Slide 5: The Interface ----------
+\begin{frame}{The Interface}
+
+  \begin{enumerate}
+    \item<1-> \texttt{make\_set(x)}
+      \begin{itemize}
+        \item<1-> Creates a new set whose only member is \texttt{x}.
+      \end{itemize}
+
+    \vspace{10pt}
+    \item<2-> \texttt{find(x)}
+      \begin{itemize}
+        \item<2-> Returns the representative of the set containing \texttt{x}.
+      \end{itemize}
+
+    \vspace{10pt}
+    \item<3-> \texttt{union(x, y)}
+      \begin{itemize}
+        \item<3-> Merges the sets containing \texttt{x} and \texttt{y} into one.
+      \end{itemize}
+  \end{enumerate}
+
+  \vspace{14pt}
+  \onslide<4->{%
+    \begin{tcolorbox}[colback=oc-blue-0, colframe=oc-blue-6, boxrule=0.8pt, arc=1.5pt, left=6pt, right=6pt, top=4pt, bottom=4pt]
+        Bacause of the two main operations, \texttt{union} and \texttt{find}, this structure is also called \textbf{Union--Find}.
+    \end{tcolorbox}
+  }
 
 \end{frame}

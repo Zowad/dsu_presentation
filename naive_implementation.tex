@@ -1,0 +1,181 @@
+\section{Naive Implementation}
+
+% ---------- Slide 6: The Setup ----------
+\begin{frame}{The Setup}
+ 
+  \begin{columns}[T,onlytextwidth]
+  
+    \begin{column}{0.52\textwidth}
+      \begin{itemize}
+        \item<1-> Maintain an array \textttt{parent[]}
+        \item<2-> \texttt{parent[i]} stores the index of element $i$'s \textbf{immediate parent} --- not necessarily its representative.
+        \item<3-> Following parents eventually reaches the \textbf{root}, which is exactly the representative: a root points to itself, \texttt{parent[root] = root}.
+      \end{itemize}
+    \end{column}
+  
+    \begin{column}{0.44\textwidth}
+      \centering
+      \begin{tikzpicture}[scale=1.0]
+      
+        \node<1->[font=\tiny, text=oc-gray-6] at (2,1.0) {\texttt{parent[]}};
+      
+        \node<1->[draw=oc-gray-6, thick, fill=oc-gray-0, minimum size=0.8cm] at (0,0) {};
+        \node<1->[draw=oc-gray-6, thick, fill=oc-gray-0, minimum size=0.8cm] at (1,0) {};
+        \node<1->[draw=oc-gray-6, thick, fill=oc-gray-0, minimum size=0.8cm] at (2,0) {};
+        \node<1->[draw=oc-gray-6, thick, fill=oc-gray-0, minimum size=0.8cm] at (3,0) {};
+        \node<1->[draw=oc-gray-6, thick, fill=oc-gray-0, minimum size=0.8cm] (box4) at (4,0) {};
+      
+        \node<1->[font=\tiny, text=oc-gray-6] at (0,-0.5) {0};
+        \node<1->[font=\tiny, text=oc-gray-6] at (1,-0.5) {1};
+        \node<1->[font=\tiny, text=oc-gray-6] at (2,-0.5) {2};
+        \node<1->[font=\tiny, text=oc-gray-6] at (3,-0.5) {3};
+        \node<1->[font=\tiny, text=oc-gray-6] at (4,-0.5) {4};
+      
+        \draw<2->[oc-blue-6, thick, -{Latex[length=1.6mm]}]
+          (2,0.45) to[bend left=40] node[midway, above, font=\tiny, text=oc-blue-6] {\textttt{parent[i]}} (4,0.45);
+        \node<2->[font=\tiny, text=oc-blue-6] at (2,-0.85) {$i$};
+      
+        \draw<3->[oc-teal-6, thick, -{Latex[length=1.4mm]}] (box4) edge[loop above, looseness=8] (box4);
+        \node<3->[font=\tiny, text=oc-teal-6] at (4,-0.85) {root};
+      
+      \end{tikzpicture}
+    \end{column}
+  
+  \end{columns}
+ 
+\end{frame}
+
+\begin{frame}{\texttt{make\_set}}
+  \dsuquadrants
+    {\dsumakesetcode
+     \par\smallskip\footnotesize Call once for each new element.}
+    {\dsuarray
+       {\dsucell<3>{\alt<3->{0}{--}}}
+       {\dsucell<4>{\alt<4->{1}{--}}}
+       {\dsucell<5>{\alt<5->{2}{--}}}
+       {\dsucell<6>{\alt<6->{3}{--}}}
+       {\dsucell<7>{\alt<7->{4}{--}}}
+       {\dsucell<8>{\alt<8->{5}{--}}}
+       {\dsucell<9>{\alt<9->{6}{--}}}
+     \par\medskip\footnotesize -- means not initialized yet.}
+    {\begin{minipage}[t]{\linewidth}
+       \uncover<3->{\texttt{make\_set(0)}: \texttt{parent[0] = 0}}\par
+       \uncover<4->{\texttt{make\_set(1)}: \texttt{parent[1] = 1}}\par
+       \uncover<5->{\texttt{make\_set(2)}: \texttt{parent[2] = 2}}\par
+       \uncover<6->{\texttt{make\_set(3)}: \texttt{parent[3] = 3}}\par
+       \uncover<7->{\texttt{make\_set(4)}: \texttt{parent[4] = 4}}\par
+       \uncover<8->{\texttt{make\_set(5)}: \texttt{parent[5] = 5}}\par
+       \uncover<9->{\texttt{make\_set(6)}: \texttt{parent[6] = 6}}
+     \end{minipage}}
+    {\begin{tikzpicture}[
+       vertex/.style={circle, draw=oc-blue-6, fill=oc-blue-0, thick,
+         minimum size=0.55cm, font=\small\bfseries}]
+       \path[use as bounding box] (-0.5,-1.7) rectangle (4.8,1.0);
+       \node<2>[font=\footnotesize, text=oc-gray-6] at (2.1,-0.4)
+         {No sets created yet.};
+       \foreach \element/\horizontal/\vertical in {
+         0/0/0,1/1.4/0,2/2.8/0,3/4.2/0,4/0/-1.4,5/1.4/-1.4,6/2.8/-1.4}{
+         \pgfmathtruncatemacro{\reveal}{\element+3}
+         \node<\reveal->[vertex] (singleton\element) at (\horizontal,\vertical) {\element};
+         \draw<\reveal->[->, >=stealth, thick, oc-blue-6]
+           (singleton\element) edge[loop above] (singleton\element);
+       }
+     \end{tikzpicture}}
+\end{frame}
+
+\begin{frame}{\texttt{find}: Follow Parents to the Root}
+  \dsuquadrants
+    {\dsufindcode}
+    {\dsuarray
+       {\dsucell<0>{0}}{\dsucell<0>{1}}{\dsucell<0>{2}}
+       {\dsucell<0>{3}}{\dsucell<4->{4}}{\dsucell<0>{5}}{\dsucell<0>{6}}}
+    {\texttt{find(4)}
+     \begin{itemize}
+       \item<4-> Read \texttt{parent[4] = 4}.
+       \item<5-> The node is its own parent: return $4$.
+     \end{itemize}}
+    {\dsuforest[{
+       \node<4->[vertex, draw=oc-orange-6, line width=1.5pt, fill=oc-orange-0]
+         at (dsunode4) {4};
+     }]{0}{1}{2}{3}{4}{5}{6}}
+\end{frame}
+
+\begin{frame}{\texttt{union}: Find Both Roots, Then Link}
+  \dsuquadrants
+    {\dsuunioncode}
+    {\dsuarray
+       {\dsucell<8-10,18-21>{0}}
+       {\dsucell<4-6,9-10,17>{\alt<10->{0}{1}}}
+       {\dsucell<5-6,16>{\alt<6->{1}{2}}}
+       {\dsucell<12-14,20-21>{\alt<21->{0}{3}}}
+       {\dsucell<13-14,19>{\alt<14->{3}{4}}}
+       {\dsucell<0>{5}}{\dsucell<0>{6}}}
+    {\begin{minipage}[t]{\linewidth}
+       \footnotesize
+       \uncover<3->{\texttt{union(1, 2)}}\quad
+       \uncover<6->{\texttt{parent[2]} $\leftarrow 1$}\par
+       \uncover<7->{\texttt{union(0, 1)}}\quad
+       \uncover<10->{\texttt{parent[1]} $\leftarrow 0$}\par
+       \uncover<11->{\texttt{union(3, 4)}}\quad
+       \uncover<14->{\texttt{parent[4]} $\leftarrow 3$}\par
+       \uncover<15->{\texttt{union(2, 4)}}\quad
+       \uncover<21->{\texttt{parent[3]} $\leftarrow 0$}\par\medskip
+       \begin{minipage}[t][1.35cm][t]{\linewidth}
+         \only<3-6>{%
+           \uncover<4->{\texttt{find(1)}: \texttt{parent[1] = 1} $\Rightarrow$ rootA $=1$}\par
+           \uncover<5->{\texttt{find(2)}: \texttt{parent[2] = 2} $\Rightarrow$ rootB $=2$}\par
+           \uncover<6->{Different roots: attach $2$ under $1$.}
+         }%
+         \only<7-10>{%
+           \uncover<8->{\texttt{find(0)}: \texttt{parent[0] = 0} $\Rightarrow$ rootA $=0$}\par
+           \uncover<9->{\texttt{find(1)}: \texttt{parent[1] = 1} $\Rightarrow$ rootB $=1$}\par
+           \uncover<10->{Different roots: attach $1$ under $0$.}
+         }%
+         \only<11-14>{%
+           \uncover<12->{\texttt{find(3)}: \texttt{parent[3] = 3} $\Rightarrow$ rootA $=3$}\par
+           \uncover<13->{\texttt{find(4)}: \texttt{parent[4] = 4} $\Rightarrow$ rootB $=4$}\par
+           \uncover<14->{Different roots: attach $4$ under $3$.}
+         }%
+         \only<15-21>{%
+           \uncover<16->{\texttt{find(2)}: $2 \to 1$}%
+           \uncover<17->{$\to 0$}%
+           \uncover<18->{; \texttt{parent[0] = 0} $\Rightarrow$ rootA $=0$}\par
+           \uncover<19->{\texttt{find(4)}: $4 \to 3$}%
+           \uncover<20->{; \texttt{parent[3] = 3} $\Rightarrow$ rootB $=3$}\par
+           \uncover<21->{Different roots: attach $3$ under $0$, not $4$ under $2$.}
+         }
+       \end{minipage}
+     \end{minipage}}
+    {\only<1-5>{\dsuforest[{
+       \node<4-5>[vertex, draw=oc-orange-6, fill=oc-orange-0, line width=1.5pt]
+         at (dsunode1) {1};
+       \node<5>[vertex, draw=oc-orange-6, fill=oc-orange-0, line width=1.5pt]
+         at (dsunode2) {2};
+     }]{0}{1}{2}{3}{4}{5}{6}}%
+     \only<6-9>{\dsuforest[{
+       \draw<6>[pointer, oc-orange-6, line width=1.5pt] (dsunode2) -- (dsunode1);
+       \node<8-9>[vertex, draw=oc-orange-6, fill=oc-orange-0, line width=1.5pt]
+         at (dsunode0) {0};
+       \node<9>[vertex, draw=oc-orange-6, fill=oc-orange-0, line width=1.5pt]
+         at (dsunode1) {1};
+     }]{0}{1}{1}{3}{4}{5}{6}}%
+     \only<10-13>{\dsuforest[{
+       \draw<10>[pointer, oc-orange-6, line width=1.5pt] (dsunode1) -- (dsunode0);
+       \node<12-13>[vertex, draw=oc-orange-6, fill=oc-orange-0, line width=1.5pt]
+         at (dsunode3) {3};
+       \node<13>[vertex, draw=oc-orange-6, fill=oc-orange-0, line width=1.5pt]
+         at (dsunode4) {4};
+     }]{0}{0}{1}{3}{4}{5}{6}}%
+     \only<14-20>{\dsuforest[{
+       \draw<14,19-20>[pointer, oc-orange-6, line width=1.5pt] (dsunode4) -- (dsunode3);
+       \draw<16-20>[pointer, oc-orange-6, line width=1.5pt] (dsunode2) -- (dsunode1);
+       \draw<17-20>[pointer, oc-orange-6, line width=1.5pt] (dsunode1) -- (dsunode0);
+       \node<18-20>[vertex, draw=oc-orange-6, fill=oc-orange-0, line width=1.5pt]
+         at (dsunode0) {0};
+       \node<20>[vertex, draw=oc-orange-6, fill=oc-orange-0, line width=1.5pt]
+         at (dsunode3) {3};
+     }]{0}{0}{1}{3}{3}{5}{6}}%
+     \only<21>{\dsuforest[{
+       \draw[pointer, oc-orange-6, line width=1.5pt] (dsunode3) -- (dsunode0);
+     }]{0}{0}{1}{0}{3}{5}{6}}}
+\end{frame}

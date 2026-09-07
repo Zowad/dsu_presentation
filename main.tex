@@ -1,5 +1,7 @@
 \documentclass[aspectratio=169,10pt]{beamer}
 \usetheme{Arguelles}
+\usepackage{listings}
+\usetikzlibrary{arrows.meta}
 
 \title{Disjoint Set Union}
 \date{\today}
@@ -19,9 +21,153 @@
   \end{frame}
 }
 
+\newcommand{\dsuarray}[7]{%
+  {\small\setlength{\tabcolsep}{3pt}
+    \renewcommand{\arraystretch}{1.35}
+    \begin{tabular}{r|ccccccc}
+      index & 0 & 1 & 2 & 3 & 4 & 5 & 6 \\
+      \hline
+      \texttt{parent} & #1 & #2 & #3 & #4 & #5 & #6 & #7
+    \end{tabular}
+  }%
+}
+ 
+\newcommand<>{\dsucell}[1]{%
+  \begingroup
+    \setlength{\fboxsep}{1.5pt}%
+    \setlength{\fboxrule}{0.6pt}%
+    \alt#2{%
+      \fcolorbox{oc-orange-6}{oc-orange-0}{\makebox[0.9em]{\strut #1}}%
+    }{%
+      \fcolorbox{structure.bg}{structure.bg}{\makebox[0.9em]{\strut #1}}%
+    }%
+  \endgroup
+}
+
+\newcommand{\dsuquadrants}[4]{%
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.46\textwidth}
+      \begin{minipage}[t][2.35cm][t]{\linewidth}
+        \textbf{Pseudocode}\par\smallskip
+        {\small #1}
+      \end{minipage}
+      \par\medskip
+      \uncover<3->{\textbf{Operations}}\par\smallskip
+      \uncover<3->{{\small #3}}
+    \end{column}
+    \begin{column}{0.50\textwidth}
+      \begin{minipage}[t][2.4cm][t]{\linewidth}
+        \uncover<2->{%
+          \textbf{Parent array}\par\medskip
+          #2
+        }
+      \end{minipage}
+      \par\medskip
+      \uncover<2->{%
+        \textbf{DSU Forest}\par\smallskip
+        #4
+      }
+    \end{column}
+  \end{columns}%
+}
+
+\newcommand{\dsuforest}[8][]{%
+\begin{tikzpicture}[
+    x=1cm, y=0.85cm,
+    vertex/.style={circle, draw=oc-gray-6, fill=white, thick,
+    minimum size=0.55cm, inner sep=1pt, font=\small\bfseries},
+    pointer/.style={->, >=stealth, thick, draw=oc-gray-6}
+  ]
+  \path[use as bounding box] (-0.2,-1.3) rectangle (5.0,2.65);
+  \foreach \element/\ancestor/\horizontal/\vertical in {
+    0/#2/1.0/1.6, 1/#3/0.25/0.4, 2/#4/0.25/-0.8,
+    3/#5/2.0/0.4, 4/#6/2.0/-0.8, 5/#7/3.4/1.6, 6/#8/4.6/1.6}{
+    \ifnum\element=\ancestor\relax
+    \node[vertex, draw=oc-blue-6, fill=oc-blue-0]
+    (dsunode\element) at (\horizontal,\vertical) {\element};
+    \else
+    \node[vertex] (dsunode\element) at (\horizontal,\vertical) {\element};
+    \fi
+  }
+  \foreach \element/\ancestor in {0/#2,1/#3,2/#4,3/#5,4/#6,5/#7,6/#8}{
+    \ifnum\element=\ancestor\relax
+    \draw[pointer, oc-blue-6] (dsunode\element) edge[loop above] (dsunode\element);
+    \else
+    \draw[pointer] (dsunode\element) -- (dsunode\ancestor);
+    \fi
+  }
+  #1
+\end{tikzpicture}%
+}
+ 
+% ---- Code-block styling for pseudocode ----
+\lstdefinestyle{dsupseudocode}{
+  language={},
+  morekeywords={if,then,return},
+  literate={<-}{{$\leftarrow$}}2 {!=}{{$\ne$}}2,
+  basicstyle=\ttfamily\footnotesize\color{oc-gray-9},
+  keywordstyle=\color{oc-blue-7}\bfseries,
+  commentstyle=\color{oc-gray-6}\itshape,
+  stringstyle=\color{oc-green-7},
+  emph={make_set,find,union},
+  emphstyle=\color{oc-teal-7},
+  numbers=left,
+  numberstyle=\tiny\color{oc-gray-6},
+  numbersep=8pt,
+  xleftmargin=1.5em,
+  frame=none,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  breaklines=true,
+  tabsize=4,
+  aboveskip=4pt,
+  belowskip=4pt
+}
+
 \begin{document}
 
+\newlength{\dsucodewidth}
+\setlength{\dsucodewidth}{0.46\textwidth}
+
+\defverbatim[colored,width=\dsucodewidth]\dsumakesetcode{%
+\begin{lstlisting}[style=dsupseudocode]
+make_set(node):
+    parent[node] <- node
+\end{lstlisting}
+}
+
+\defverbatim[colored,width=\dsucodewidth]\dsufindcode{%
+\begin{lstlisting}[style=dsupseudocode]
+find(node):
+    if parent[node] = node then
+        return node
+    return find(parent[node])
+\end{lstlisting}
+}
+
+\defverbatim[colored,width=\dsucodewidth]\dsuunioncode{%
+\begin{lstlisting}[style=dsupseudocode]
+union(first, second):
+    rootA <- find(first)
+    rootB <- find(second)
+    if rootA != rootB then
+        parent[rootB] <- rootA
+\end{lstlisting}
+}
+
+% ---------- Slide 1: Title ----------
+\begin{frame}[plain]
+  \maketitle
+\end{frame}
+
+% ---------- Slide 2: Outline ----------
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
 \include{intro}
+\include{naive_implementation}
 %\include{path_compression}
 %\include{union_by_rank}
 
