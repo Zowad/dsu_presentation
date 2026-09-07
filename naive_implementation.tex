@@ -7,7 +7,7 @@
   
     \begin{column}{0.52\textwidth}
       \begin{itemize}
-        \item<1-> Maintain an array \textttt{parent[]}
+        \item<1-> Maintain an array \texttt{parent[]}
         \item<2-> \texttt{parent[i]} stores the index of element $i$'s \textbf{immediate parent} --- not necessarily its representative.
         \item<3-> Following parents eventually reaches the \textbf{root}, which is exactly the representative: a root points to itself, \texttt{parent[root] = root}.
       \end{itemize}
@@ -32,7 +32,7 @@
         \node<1->[font=\tiny, text=oc-gray-6] at (4,-0.5) {4};
       
         \draw<2->[oc-blue-6, thick, -{Latex[length=1.6mm]}]
-          (2,0.45) to[bend left=40] node[midway, above, font=\tiny, text=oc-blue-6] {\textttt{parent[i]}} (4,0.45);
+          (2,0.45) to[bend left=40] node[midway, above, font=\tiny, text=oc-blue-6] {\texttt{parent[i]}} (4,0.45);
         \node<2->[font=\tiny, text=oc-blue-6] at (2,-0.85) {$i$};
       
         \draw<3->[oc-teal-6, thick, -{Latex[length=1.4mm]}] (box4) edge[loop above, looseness=8] (box4);

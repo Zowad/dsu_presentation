@@ -21,6 +21,7 @@
   \end{frame}
 }
 
+
 \newcommand{\dsuarray}[7]{%
   {\small\setlength{\tabcolsep}{3pt}
     \renewcommand{\arraystretch}{1.35}
@@ -163,12 +164,11 @@ union(first, second):
 
 % ---------- Slide 2: Outline ----------
 \begin{frame}{Outline}
+  \setbeamercolor{section in toc}{fg=oc-gray-8}
   \tableofcontents
 \end{frame}
 
-\include{intro}
-\include{naive_implementation}
-%\include{path_compression}
-%\include{union_by_rank}
+\input{intro.tex}
+\input{naive_implementation.tex}
 
 \end{document}
